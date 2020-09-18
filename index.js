@@ -1,23 +1,26 @@
-'use strict';
+
 
 const Hapi = require('@hapi/hapi');
 const fs = require('fs')
 const axios = require('axios')
 const speech = require('@google-cloud/speech');
-const ffmpeg = require('fluent-ffmpeg');  
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const ffmpeg = require('fluent-ffmpeg');
+ffmpeg.setFfmpegPath(ffmpegPath);
 
+require('dotenv').config()
 const client = new speech.SpeechClient();
 
 const init = async () => {
 
     const server = Hapi.server({
-        port: 3005,
+        port: process.env.PORT || 3000,
         host: 'localhost'
     });
 
     server.route({
         method: 'POST',
-        path: '/speech',
+        path: '/',
         config: {
             handler: async (request, h) => {
                 const data = request.payload;
@@ -25,6 +28,8 @@ const init = async () => {
                     const name = data.file.hapi.filename;
                     const path = __dirname + "/uploads/" + name;
                     const encodedPath = __dirname + "/uploads/encoded_" + name;
+
+            
                     const file = fs.createWriteStream(path);
     
                     file.on('error', (err) => console.error(err));
@@ -60,7 +65,7 @@ const init = async () => {
                                         enableAutomaticPunctuation: false,
                                         encoding: "LINEAR16",
                                         sampleRateHertz: 41000,
-                                        languageCode: "en-US",
+                                        languageCode: "fr-FR",
                                         model: "default"
                                     }
             
