@@ -2,4 +2,3 @@ node_modules
 .vscode
 ggconfig.json
 prepare.sh
-key.json
